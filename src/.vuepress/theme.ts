@@ -6,8 +6,8 @@ export default hopeTheme({
   hostname: "https://vuepress-theme-hope-docs-demo.netlify.app",
 
   author: {
-    name: "Mr.Hope",
-    url: "https://mrhope.site",
+    name: "dengmf",
+    url: "https://github.com/dmf-code",
   },
 
   iconAssets: "iconfont",

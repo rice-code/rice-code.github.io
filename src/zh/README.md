@@ -6,12 +6,12 @@ heroImage: /logo.svg
 heroText: Rice-Code
 tagline: 帮助写出更好的php代码
 actions:
-  - text: 使用指南 💡
-    link: /zh/demo/
+  - text: basic文档 💡
+    link: /zh/basic/
     type: primary
 
-  - text: 文档
-    link: /zh/guide/
+  - text: ctl文档 📚
+    link: /zh/ctl/
 
 features:
 
