@@ -25,6 +25,13 @@ export const zhSidebar = sidebar({
         },
         {
             icon: "discover",
+            text: "性能测试",
+            prefix: "test/",
+            link: "test/",
+            children: "structure",
+        },
+        {
+            icon: "discover",
             text: "demo",
             prefix: "demo/",
             link: "demo/",
