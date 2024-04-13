@@ -1,7 +1,15 @@
 import { defineUserConfig } from "vuepress";
 import theme from "./theme.js";
+import { viteBundler } from '@vuepress/bundler-vite'
+import { mdEnhancePlugin } from "vuepress-plugin-md-enhance"
+
+
 
 export default defineUserConfig({
+  bundler: viteBundler({
+    viteOptions: {},
+    vuePluginOptions: {},
+  }),
   base: "/",
 
   locales: {
@@ -18,7 +26,11 @@ export default defineUserConfig({
   },
 
   theme,
-
+  plugins: [
+    mdEnhancePlugin({
+      // 你的选项
+    }),
+  ],
   // Enable it with pwa
   // shouldPrefetch: false,
 });
