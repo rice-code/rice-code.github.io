@@ -6,31 +6,65 @@ icon: discover
 
 ### 怎么正确使用 Exception 类？
 
-`Basic` 包提供开箱即用的 `Exception` 类文件，一般情况下可以直接使用 `BizException` 这个业务异常类来实现
-异常的抛出。如果是需要更丰富的类型，可以继承 `BaseException` 来实现。
+`Basic` 包的异常类包含多语言和 `http status code` 指定两大功能，通过继承 `BaseException` 就能实现该功能，这
+样设计的好处在于：
+1. 可以根据异常对象获得状态码返回，便于与框架融合自动返回对应 `http status code`
+2. 与 `http status code` 强绑定后，每定义一个异常类都要知道接口返回具体的含义
+3. 多语言结合枚举类进行返回，让逻辑更加内聚
+4. 只要维护该 `Exception` 注释就能获取到具体返回的状态码和具体异常返回信息
 
 ```php
 <?php
 
 namespace Rice\Basic\Components\Exception;
 
-use Rice\Basic\Components\Enum\BizEnum;
+use Rice\Basic\Components\Enum\BaseEnum;
+use Rice\Basic\Components\Enum\HttpStatusCodeEnum;
+use Rice\Basic\Components\Enum\InvalidRequestEnum;
 
-class BizException extends BaseException
+class InvalidRequestException extends BaseException
 {
+    public static function httpStatusCode(): int
+    {
+        return HttpStatusCodeEnum::INVALID_REQUEST;
+    }
+
     public static function enumClass(): string
     {
-        return BizEnum::class;
+        return InvalidRequestEnum::class;
+    }
+
+    /**
+     * @throws InvalidRequestException
+     */
+    public static function default(): void
+    {
+        throw new self(InvalidRequestEnum::DEFAULT);
+    }
+
+    /**
+     * 如果这里是控制器的话，我们只要维护好 `phpstorm` 自带注释，那在做注解自动获取异常返回时
+     * 我们就能为 openApi 生成一个异常返回
+     *
+     * @throws InvalidRequestException
+     */
+    public static function InvalidParam(): void
+    {
+        throw new self(BaseEnum::INVALID_PARAM);
     }
 }
+
 ```
 `BaseException` 的实现类需要实现 `enumClass` 返回 `BaseEnum` 相关实现类，之后我们抛异常就可以这样子处理
 
 ```php
         try {
-            throw new BizException(BizEnum::DEFAULT);
-        } catch (BizException $e) {
-            $this->assertEquals('Business Error', $e->getMessage());
+            throw new InvalidRequestException(InvalidRequestEnum::DEFAULT);
+        } catch (InvalidRequestException $e) {
+            // 获取验证码
+            $e::httpStatusCode();
+            // 获取异常信息
+            $e->getMessage();
         }
 ```
 
@@ -41,10 +75,12 @@ class BizException extends BaseException
 
 ```php
         try {
-            throw new BizException(BizEnum::DEFAULT);
-        } catch (BizException $e) {
-            return $this->failure(ClientErrorCode::CLIENT_ERROR, $e->getMessage());
+            throw new InvalidRequestException(InvalidRequestEnum::DEFAULT);
+        } catch (BaseException $e) {
+            // 直接异常抛出，在框架处进行统一异常返回
+            throw $e;
         } catch (\Throwable $e) {
+            // 非继承 `BaseException` 异常返回
             Log::error($e->getMessage());
 
             return $this->failure(ClientErrorCode::CLIENT_ERROR, '系统出错');

@@ -12,6 +12,7 @@ sort: 1
 [PayPal官方返回码文档](https://developer.paypal.com/api/rest/responses/)
 
 #### 为什么要用这种方式，这样不会很麻烦吗？
+
 我以前也是喜欢 `200` 状态码进行一撸到底，然后再返回 `status` 进行区分接口是否成功请求。
 ```json
 {
